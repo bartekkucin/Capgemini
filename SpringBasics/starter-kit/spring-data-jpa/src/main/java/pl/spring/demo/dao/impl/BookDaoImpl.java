@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
 
 @Repository
-public class BookDaoImpl implements BookDao {
+public class BookDaoImpl extends AbstractDaoImpl<BookEntity> implements BookDao {
 
 	private final Set<BookEntity> ALL_BOOKS = new HashSet<>();
 
@@ -32,10 +32,10 @@ public class BookDaoImpl implements BookDao {
 		addTestBooks();
 	}
 
-	@Override
-	public List<BookEntity> findAll() {
-		return new ArrayList<>(ALL_BOOKS);
-	}
+//	@Override
+//	public List<BookEntity> findAll() {
+//		return new ArrayList<>(ALL_BOOKS);
+//	}
 
 	@Override
 	public List<BookEntity> findBookByTitle(String title) {
@@ -81,17 +81,19 @@ public class BookDaoImpl implements BookDao {
 				|| temp[2].toLowerCase().startsWith(authorName[0].toLowerCase()));
 	}
 
-	@Override
-	@NullableId
-	public BookEntity save(BookEntity book) {
-		ALL_BOOKS.add(book);
-		return book;
-	}
+//	@Override
+//	@NullableId
+//	public BookEntity save(BookEntity book) {
+//		ALL_BOOKS.add(book);
+//		return book;
+//	}
 
+	@Override
 	public void setSequence(Sequence sequence) {
 		this.sequence = sequence;
 	}
 
+	@Override
 	public Sequence getSequence() {
 		return sequence;
 	}
@@ -104,4 +106,10 @@ public class BookDaoImpl implements BookDao {
 		ALL_BOOKS.add(new BookEntity(5L, "Pan Samochodzik i Fantomas", "5 Zbigniew Nienacki"));
 		ALL_BOOKS.add(new BookEntity(6L, "Zemsta", "6 Aleksander Fredro"));
 	}
+
+	@Override
+	public Set<BookEntity> getEntities() {
+		return ALL_BOOKS;
+	}
+	
 }

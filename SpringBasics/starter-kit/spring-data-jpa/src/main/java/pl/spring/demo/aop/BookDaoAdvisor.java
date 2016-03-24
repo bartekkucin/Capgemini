@@ -1,7 +1,10 @@
 package pl.spring.demo.aop;
 
 import pl.spring.demo.annotation.NullableId;
+import pl.spring.demo.common.Sequence;
+import pl.spring.demo.dao.Dao;
 import pl.spring.demo.dao.impl.BookDaoImpl;
+import pl.spring.demo.dao.impl.AbstractDaoImpl;
 import pl.spring.demo.exception.BookNotNullIdException;
 import pl.spring.demo.to.BookEntity;
 import pl.spring.demo.to.IdAware;
@@ -20,7 +23,8 @@ import org.springframework.stereotype.Component;
 public class BookDaoAdvisor 
 {
 
-	@Before("execution(* pl.spring.demo.dao.BookDao.save(..))")
+	//@Before("execution(* pl.spring.demo.dao.BookDao.save(..))")
+	@Before("execution(* pl.spring.demo.dao..*(..))")
 	public void before(JoinPoint joinPoint) throws Throwable {
 
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -32,11 +36,11 @@ public class BookDaoAdvisor
 			setIdBook(objects[0], joinPoint.getTarget());
 		}
 	}
-
-	private void setIdBook(Object book, Object bookDaoImpl) {
-		if (book instanceof BookEntity && bookDaoImpl instanceof BookDaoImpl) {
-			BookDaoImpl bookDao = (BookDaoImpl) bookDaoImpl;
-			((BookEntity) book).setId((Long) (bookDao.getSequence().nextValue(bookDao.findAll())));
+	
+	private void setIdBook(Object o, Object daoImpl) {
+		if (o instanceof IdAware && daoImpl instanceof AbstractDaoImpl) {
+			AbstractDaoImpl bookDao = (AbstractDaoImpl) daoImpl;
+			((IdAware) o).setId((Long) (bookDao.getSequence().nextValue(bookDao.findAll())));
 		}
 	}
 
